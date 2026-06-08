@@ -1,3 +1,5 @@
+import { AudioDetailActions } from "@/components/audio-detail-actions";
+import { LiveTranscript } from "@/components/live-transcript";
 import { StatusBadge } from "@/components/status-badge";
 import {
   Accordion,
@@ -71,28 +73,43 @@ export default async function AudioDetailPage({ params }: PageProps) {
             </div>
           </div>
         </div>
-        {asset.status === "PENDING" && (
-          <Link href="/">
-            <Button variant="outline">Procesar desde el dashboard</Button>
-          </Link>
-        )}
+        <div className="flex flex-wrap items-center gap-2">
+          {asset.status === "PENDING" && (
+            <Link href="/">
+              <Button variant="outline">Procesar desde el dashboard</Button>
+            </Link>
+          )}
+          <AudioDetailActions
+            assetId={asset.id}
+            filename={asset.filename}
+            status={asset.status}
+          />
+        </div>
       </div>
 
       {!asset.transcript ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Sin procesar</CardTitle>
-            <CardDescription>
-              Este audio todavía no fue procesado. Volvé al dashboard y usá el
-              botón Procesar.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Link href="/">
-              <Button>Ir al dashboard</Button>
-            </Link>
-          </CardContent>
-        </Card>
+        asset.status === "PROCESSING" || asset.status === "PENDING" ? (
+          <LiveTranscript
+            assetId={asset.id}
+            filename={asset.filename}
+            initialStatus={asset.status}
+          />
+        ) : (
+          <Card>
+            <CardHeader>
+              <CardTitle>Sin procesar</CardTitle>
+              <CardDescription>
+                Este audio todavía no fue procesado. Volvé al dashboard y usá
+                el botón Procesar.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href="/">
+                <Button>Ir al dashboard</Button>
+              </Link>
+            </CardContent>
+          </Card>
+        )
       ) : (
         <>
           <Card>

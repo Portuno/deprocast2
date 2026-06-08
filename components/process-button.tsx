@@ -26,7 +26,9 @@ export function ProcessButton({ assetId, onProcessed }: ProcessButtonProps) {
         throw new Error(data.error ?? "No se pudo procesar el audio");
       }
 
-      toast.success("Procesamiento iniciado");
+      toast.success(
+        data.message ?? "Audio agregado a la cola de procesamiento",
+      );
       onProcessed();
     } catch (error) {
       const message =

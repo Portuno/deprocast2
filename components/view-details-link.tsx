@@ -3,13 +3,14 @@ import Link from "next/link";
 
 type ViewDetailsLinkProps = {
   assetId: string;
+  label?: string;
 };
 
-export function ViewDetailsLink({ assetId }: ViewDetailsLinkProps) {
+export function ViewDetailsLink({ assetId, label = "Ver Detalles" }: ViewDetailsLinkProps) {
   return (
     <Link href={`/audio/${assetId}`}>
       <Button size="sm" variant="outline">
-        Ver Detalles
+        {label}
       </Button>
     </Link>
   );

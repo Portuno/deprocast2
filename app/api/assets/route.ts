@@ -14,6 +14,7 @@ export async function GET() {
         durationMs: true,
         originalCreatedAt: true,
         status: true,
+        partialText: true,
         createdAt: true,
         updatedAt: true,
       },

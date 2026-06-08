@@ -1,3 +1,4 @@
+import { deleteAudioAsset } from "@/lib/delete-asset";
 import { getAssetDetail } from "@/lib/queries/get-asset-detail";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -25,6 +26,33 @@ export async function GET(_request: NextRequest, context: RouteContext) {
     console.error("Asset detail error:", error);
     return NextResponse.json(
       { error: "No se pudo cargar el detalle del audio." },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(_request: NextRequest, context: RouteContext) {
+  const { id } = await context.params;
+
+  try {
+    const deleted = await deleteAudioAsset(id);
+
+    if (!deleted) {
+      return NextResponse.json(
+        { error: "Audio no encontrado." },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json({
+      id,
+      message: "Audio y transcripción eliminados.",
+    });
+  } catch (error) {
+    console.error("Asset delete error:", error);
+
+    return NextResponse.json(
+      { error: "No se pudo eliminar el audio." },
       { status: 500 },
     );
   }

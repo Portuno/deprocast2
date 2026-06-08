@@ -14,8 +14,8 @@ export function Dashboard() {
         <p className="text-sm font-medium text-muted-foreground">MVP local</p>
         <h1 className="text-3xl font-semibold tracking-tight">Deprocast</h1>
         <p className="max-w-2xl text-muted-foreground">
-          Ingestá notas de voz, simulá su transcripción y explorá cómo se
-          estructura la información para búsqueda semántica.
+          Subí varios audios a la vez, procesalos en cola y seguí la
+          transcripción en vivo mientras Whisper los transcribe.
         </p>
       </header>
 
