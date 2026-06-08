@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// Status values: PENDING | PROCESSING | COMPLETED | ERROR
+model AudioAsset {
+  id                String   @id @default(uuid())
+  filename          String
+  fileUrl           String
+  durationMs        Int?
+  originalCreatedAt DateTime
+  status            String   @default("PENDING")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  transcript Transcript?
+
+  @@index([status])
+}
+
+model Transcript {
+  id         String   @id @default(uuid())
+  assetId    String   @unique
+  rawText    String
+  confidence Float?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  asset        AudioAsset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  parentChunks ParentChunk[]
+}
+
+model ParentChunk {
+  id           String @id @default(uuid())
+  transcriptId String
+  content      String
+  startTimeMs  Int
+  endTimeMs    Int
+  summary      String
+
+  transcript Transcript          @relation(fields: [transcriptId], references: [id], onDelete: Cascade)
+  children   ChildChunk[]
+  entities   ParentChunkEntity[]
+  tags       ParentChunkTag[]
+
+  @@index([transcriptId])
+}
+
+model ChildChunk {
+  id       String @id @default(uuid())
+  parentId String
+  content  String
+
+  parent ParentChunk @relation(fields: [parentId], references: [id], onDelete: Cascade)
+
+  @@index([parentId])
+}
+
+model Entity {
+  id   String @id @default(uuid())
+  name String @unique
+  type String
+
+  parentChunks ParentChunkEntity[]
+}
+
+model Tag {
+  id   String @id @default(uuid())
+  name String @unique
+
+  parentChunks ParentChunkTag[]
+}
+
+model ParentChunkEntity {
+  parentChunkId String
+  entityId      String
+
+  parentChunk ParentChunk @relation(fields: [parentChunkId], references: [id], onDelete: Cascade)
+  entity      Entity      @relation(fields: [entityId], references: [id], onDelete: Cascade)
+
+  @@id([parentChunkId, entityId])
+}
+
+model ParentChunkTag {
+  parentChunkId String
+  tagId         String
+
+  parentChunk ParentChunk @relation(fields: [parentChunkId], references: [id], onDelete: Cascade)
+  tag         Tag         @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([parentChunkId, tagId])
+}
